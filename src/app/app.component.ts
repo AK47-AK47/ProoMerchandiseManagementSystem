@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
+import { TabmenuComponent } from './components/tabmenu/tabmenu.component';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, TabmenuComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
 })
 export class AppComponent {
-  title = 'ProoMerchandiseManagementSystem';
+  title = 'Proo Merchandise Management System';
 }
