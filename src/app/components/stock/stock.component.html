@@ -1,0 +1,32 @@
+<div class="card">
+    <p-table #dt [value]="products" (sortFunction)="customSort($event)" [customSort]="true">
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="name">
+                    Name <p-sortIcon field="name" />
+                </th>
+                <th pSortableColumn="size">
+                    Size <p-sortIcon field="size" />
+                </th>
+                <th pSortableColumn="color">
+                    Color <p-sortIcon field="color" />
+                </th>
+                <th pSortableColumn="price">
+                    Price <p-sortIcon field="price" />
+                </th>
+                <th pSortableColumn="quantity">
+                    Quantity <p-sortIcon field="quantity" />
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product>
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>{{ product.size }}</td>
+                <td>{{ product.color }}</td>
+                <td>{{ product.price }}</td>
+                <td>{{ product.quantity }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
