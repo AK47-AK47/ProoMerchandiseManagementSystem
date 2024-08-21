@@ -1,0 +1,92 @@
+<form>
+    <h1>Add New Merch</h1>
+
+    <div class="card flex flex-column gap-8">
+        <div class="card flex flex-column md:flex-row gap-3">   
+            <div>
+                <p-inputGroup>
+                    <p-inputGroupAddon>
+                        <i class="pi pi-star-fill"></i>
+                    </p-inputGroupAddon>
+                    <input pInputText placeholder="MerchName" />
+                </p-inputGroup>
+                <p-inputGroup>
+                    <p-inputGroupAddon>
+                        <i class="pi pi-barcode"></i>
+                    </p-inputGroupAddon>
+                    <p-inputNumber 
+                        [(ngModel)]="price" 
+                        mode="currency"
+                        inputId="currency-german"
+                        currency="EUR" 
+                        locale="de-DE" 
+                        name="price"
+                        placeholder="MerchPrice" />
+                </p-inputGroup>
+                <p-inputGroup >
+                    <p-inputGroupAddon>
+                        <i class="pi pi-image"></i>
+                    </p-inputGroupAddon>
+                    <p-toast />
+                    <p-fileUpload 
+                        name="demo[]" 
+                        url="https://www.primefaces.org/cdn/api/upload.php" 
+                        (onUpload)="onUpload($event)" 
+                        [multiple]="true" 
+                        accept="image/*" 
+                        maxFileSize="1000000">
+                        
+                            <ng-template pTemplate="content">
+                                Σύρετε και αφήστε τα αρχεία εδώ για να τα ανεβάσετε.
+                                <ul *ngIf="uploadedFiles.length">
+                                    <li *ngFor="let file of uploadedFiles">
+                                        {{ file.name }} - {{ file.size }} bytes
+                                    </li>
+                                </ul>
+                            </ng-template>
+                    </p-fileUpload>
+                </p-inputGroup>
+            </div>
+            <div class="flex gap-3">
+                <p-inputGroup>
+                    <p-button (onClick)="showDialog()" label="Προσθήκη Παραλλαγής (Χρώμα, Μέγεθος, Ποσότητα)" />
+                    <p-dialog header="Προσθήκη Παραλλαγής" [modal]="true" [(visible)]="visible" >
+                        
+                        <form [formGroup]="variantForm" class="flex flex-column gap-3">
+                            <div class="flex align-items-center">
+                                <label for="color" class="font-semibold w-6rem">Χρώμα</label>
+                                <input pInputText id="color" class="flex-auto" autocomplete="off" formControlName="color"/>
+                            </div>
+                            <div class="flex align-items-center">
+                                <label for="size" class="font-semibold w-6rem">Μέγεθος</label>
+                                <input pInputText id="size" class="flex-auto" autocomplete="off" formControlName="size"/>
+                            </div>
+                            <div class="flex align-items-center">
+                                <label for="quantity" class="font-semibold w-6rem">Ποσότητα</label>
+                                <p-inputNumber  id="quantity" class="flex-auto" autocomplete="off" inputId="integeronly" [showButtons]="true" [min]="0" locale="de-DE" formControlName="quantity"/>
+                            </div>
+                            <div class="flex justify-content-end flex-column md:flex-row gap-3">
+                                <p-button label="Save" (onClick)="addVariant($event)" />
+                                <p-button label="Cancel" severity="secondary" (onClick)="visible = false" />
+                            </div>
+                        </form>
+                    </p-dialog>
+                    @if(variants.length){
+                        <ul>
+                            @for (vari of variants; track vari.id){
+                                <li>
+                                    {{ vari.color }} var
+                                </li>
+                            }
+                        </ul>
+                    }
+                </p-inputGroup>
+            </div>   
+        </div>
+        <p-button (onClick)="submitNewMerch()" label="Προσθήκη Εμπορεύματος" />
+    </div>
+</form> 
+
+
+
+    
