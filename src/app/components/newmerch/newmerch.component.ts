@@ -11,7 +11,7 @@ import { ToastModule } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
-
+import { MerchApiCallsService } from '../../services/api-calls/merch-api-calls.service';
 
 @Component({
   selector: 'app-newmerch',
@@ -34,22 +34,30 @@ import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
   styleUrl: './newmerch.component.css',
 })
 export class NewMerchComponent {
-  constructor(private messageService: MessageService) {}
+  constructor(private messageService: MessageService, private merchService:MerchApiCallsService) {}
 
   price!: number;
   uploadedFiles: any[] = [];
+  image!: string;
   visible: boolean = false;
   variants: any[] = [];
+
+  newMerchForm = new FormGroup({
+    merchName: new FormControl(''),
+    merchPrice: new FormControl(0),
+  });
+
   variantForm = new FormGroup({
     color: new FormControl('', [Validators.required]),
     size: new FormControl('', [Validators.required]),
-    quantity: new FormControl('', [Validators.required]),
+    quantity: new FormControl(0, [Validators.required]),
   });
 
   onUpload(event: FileUploadEvent) {
     for (let file of event.files) {
       this.uploadedFiles.push(file);
-      console.log('push image');
+      //this.image = file.webkitRelativePath;
+      console.log('push image', file);
     }
 
     this.messageService.add({
@@ -69,15 +77,28 @@ export class NewMerchComponent {
 
   addVariant(event: Event) {
     console.log('sent var data');
-    console.log(this.variantForm.value);
-    let newVariantData = {...this.variantForm.value, id:this.variants.length+1};
+    //--- is this a service?
+    let formVariantData = this.variantForm.value;
+    let newVariantData = {
+      id: this.variants.length + 1,
+      ...formVariantData,
+    };
     this.variants.push(newVariantData);
-      console.log(newVariantData);
+    console.log(newVariantData);
+    //---
     this.hideDialog();
   }
 
   submitNewMerch() {
     //add data fron popupdialog to vsriants[]
     console.log('New Merch Added');
+    let newMerchData = {
+      ...this.newMerchForm.value,
+      merchVariants: this.variants,
+    };
+    console.log(newMerchData);
+    this.merchService.addNewMerch(newMerchData).subscribe(res =>{
+      console.log('Response status:', res, "|", res.status);
+    });
   }
 }

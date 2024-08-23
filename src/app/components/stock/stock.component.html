@@ -1,31 +1,35 @@
 <div class="card">
-    <p-table #dt [value]="products" (sortFunction)="customSort($event)" [customSort]="true">
+    <p-table #dt [value]="products$ | async" (sortFunction)="customSort($event)" [customSort]="true">
         <ng-template pTemplate="header">
-            <tr>
-                <th pSortableColumn="name">
-                    Name <p-sortIcon field="name" />
-                </th>
-                <th pSortableColumn="color">
-                    Color <p-sortIcon field="color" />
-                </th>
-                <th pSortableColumn="size">
-                    Size <p-sortIcon field="size" />
-                </th>
-                <th pSortableColumn="price">
-                    Price <p-sortIcon field="price" />
-                </th>
-                <th pSortableColumn="quantity">
-                    Quantity <p-sortIcon field="quantity" />
-                </th>
-            </tr>
+                <tr>
+                    <th scope="col" pSortableColumn="name">
+                        Name <p-sortIcon field="name" />
+                    </th>
+                    <th scope="col" pSortableColumn="color">
+                        Color <p-sortIcon field="color" />
+                    </th>
+                    <th scope="col" pSortableColumn="size">
+                        Size <p-sortIcon field="size" />
+                    </th>
+                    <th scope="col" pSortableColumn="price">
+                        Price <p-sortIcon field="price" />
+                    </th>
+                    <th scope="col" pSortableColumn="quantity">
+                        Quantity <p-sortIcon field="quantity" />
+                    </th>
+                </tr>
         </ng-template>
         <ng-template pTemplate="body" let-product>
-            <tr>
+            <tr >
+                <td>{{ product.id }}</td>
+                <td>{{ product.title }}</td>
+                <!--
                 <td>{{ product.name }}</td>
                 <td>{{ product.size }}</td>
                 <td>{{ product.color }}</td>
                 <td>{{ product.price }}</td>
                 <td>{{ product.quantity }}</td>
+                -->
             </tr>
         </ng-template>
     </p-table>

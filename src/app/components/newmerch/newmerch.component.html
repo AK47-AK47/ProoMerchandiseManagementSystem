@@ -1,4 +1,4 @@
-<form>
+<form [formGroup]="newMerchForm">
     <h1>Add New Merch</h1>
 
     <div class="card flex flex-column gap-8">
@@ -8,20 +8,20 @@
                     <p-inputGroupAddon>
                         <i class="pi pi-star-fill"></i>
                     </p-inputGroupAddon>
-                    <input pInputText placeholder="MerchName" />
+                    <input pInputText placeholder="Merch Name" formControlName="merchName" />
                 </p-inputGroup>
                 <p-inputGroup>
                     <p-inputGroupAddon>
                         <i class="pi pi-barcode"></i>
                     </p-inputGroupAddon>
                     <p-inputNumber 
-                        [(ngModel)]="price" 
+                        name="price" 
                         mode="currency"
                         inputId="currency-german"
                         currency="EUR" 
                         locale="de-DE" 
-                        name="price"
-                        placeholder="MerchPrice" />
+                        placeholder="Merch Price"
+                        formControlName="merchPrice" />
                 </p-inputGroup>
                 <p-inputGroup >
                     <p-inputGroupAddon>
@@ -34,8 +34,8 @@
                         (onUpload)="onUpload($event)" 
                         [multiple]="true" 
                         accept="image/*" 
-                        maxFileSize="1000000">
-                        
+                        maxFileSize="1000000"
+                        formControlName="merchImage">
                             <ng-template pTemplate="content">
                                 Σύρετε και αφήστε τα αρχεία εδώ για να τα ανεβάσετε.
                                 <ul *ngIf="uploadedFiles.length">
@@ -72,18 +72,18 @@
                                 </div>
                             </form>
                         </p-dialog>
-                    @if(variants.length){
+                      @if(variants.length){
                         <div>
                             <h2>Παραλλαγές</h2>
                             <ul>
-                                @for (vari of variants; track vari.id){
-                                    <li>
-                                        {{ vari.color }} var
-                                    </li>
-                                }
+                              @for (vari of variants; track vari.id){
+                                <li>
+                                    {{ vari.color }} var
+                                </li>
+                              }
                             </ul>
                         </div>
-                    }
+                      }
                     </div>
                     
                 </p-inputGroup>
