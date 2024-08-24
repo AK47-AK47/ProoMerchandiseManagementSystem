@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, Validators } from '@angular/forms';
 import { InputGroupModule } from 'primeng/inputgroup';
@@ -12,6 +12,7 @@ import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MerchApiCallsService } from '../../services/api-calls/merch-api-calls.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-newmerch',
@@ -33,8 +34,14 @@ import { MerchApiCallsService } from '../../services/api-calls/merch-api-calls.s
   templateUrl: './newmerch.component.html',
   styleUrl: './newmerch.component.css',
 })
-export class NewMerchComponent {
-  constructor(private messageService: MessageService, private merchService:MerchApiCallsService) {}
+export class NewMerchComponent implements OnDestroy {
+  //A single destroyObservable$ subject type is created.
+  private destroyObservable$ = new Subject<void>();
+
+  constructor(
+    private messageService: MessageService,
+    private merchService: MerchApiCallsService
+  ) {}
 
   price!: number;
   uploadedFiles: any[] = [];
@@ -83,6 +90,8 @@ export class NewMerchComponent {
       id: this.variants.length + 1,
       ...formVariantData,
     };
+    
+    //add data fron popupdialog to variants[]
     this.variants.push(newVariantData);
     console.log(newVariantData);
     //---
@@ -90,15 +99,35 @@ export class NewMerchComponent {
   }
 
   submitNewMerch() {
-    //add data fron popupdialog to vsriants[]
-    console.log('New Merch Added');
+    // combine αλλ data from the form into one Object 
     let newMerchData = {
       ...this.newMerchForm.value,
       merchVariants: this.variants,
     };
     console.log(newMerchData);
-    this.merchService.addNewMerch(newMerchData).subscribe(res =>{
-      console.log('Response status:', res, "|", res.status);
+
+    /**
+     * const AddMerchObservable$ use takeUntil(this.destroyObservable$)
+     * to unsubscribe when the destroyObservable$ subject emits a value...
+     * ...this happens technically on ngOnDestry() method
+     */
+    const addMerchObservable$ = this.merchService.addNewMerch(newMerchData).pipe(takeUntil(this.destroyObservable$));
+    //subscribe to addMerchObservable to handle errors and/or to see the respond
+    addMerchObservable$.subscribe((res) => {
+      console.log('Response: ', res);
+      console.log("Response status:", res.status);
     });
+  }
+
+  /**
+   * The ngOnDestroy method unsubscribes
+   * from AddMerchObservable(all that is subscribed to Sublect-observable via takeUntil)
+   * by calling this.destroyObservable$.next().
+   */
+  ngOnDestroy(): void {
+    //emit a next value from destroyObservable(Subject), so takeUntill(this.destroyObservable$) triggered and stop the addMerchObservable
+    this.destroyObservable$.next();
+    //unsubscribe-completes-closes the Subject-observable
+    this.destroyObservable$.complete();
   }
 }
